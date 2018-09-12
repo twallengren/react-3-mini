@@ -6,6 +6,9 @@ import './App.css';
 // Toast notification dependencies
 import { ToastContainer, toast } from 'react-toastify';
 
+// BASE URL
+const BASE_URL = "https://joes-autos.herokuapp.com/api"
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -31,16 +34,27 @@ class App extends Component {
   getVehicles() {
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(BASE_URL + "/vehicles").then(response => {
+      toast.success("Got All Vehicles")
+      this.setState({ vehiclesToDisplay: response.data })
+    })
   }
 
   getPotentialBuyers() {
     // axios (GET)
     // setState with response -> buyersToDisplay
+    axios.get(`${BASE_URL}/buyers`).then(response => {
+      this.setState({ buyersToDisplay: response.data })
+    })
   }
 
   sellCar(id) {
     // axios (DELETE)
     // setState with response -> vehiclesToDisplay
+    axios.delete(`${BASE_URL}/vehicles/${id}`).then(response => {
+      toast.success("SOLD!")
+      this.setState({ vehiclesToDisplay: response.data.vehicles })
+    }).catch(() => { toast.error("COULD NOT SELL VEHICLE") })
   }
 
   filterByMake() {
@@ -48,6 +62,12 @@ class App extends Component {
 
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${BASE_URL}/vehicles`).then(response => {
+      let vehicles = response.data.filter(ve => {
+        return ve.make === make
+      });
+      this.setState({ vehiclesToDisplay: vehicles })
+    })
   }
 
   filterByColor() {
@@ -55,11 +75,20 @@ class App extends Component {
 
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${BASE_URL}/vehicles`).then(response => {
+      let vehicles = response.data.filter(ve => {
+        return ve.color === color
+      });
+      this.setState({ vehiclesToDisplay: vehicles })
+    })
   }
 
   updatePrice(priceChange, id) {
     // axios (PUT)
     // setState with response -> vehiclesToDisplay
+    axios.put(`${BASE_URL}/vehicles/${id}/${priceChange}`).then(response => {
+      this.setState({ vehiclesToDisplay: response.data.vehicles })
+    })
   }
 
   addCar() {
@@ -73,6 +102,10 @@ class App extends Component {
 
     // axios (POST)
     // setState with response -> vehiclesToDisplay
+    axios.post(`${BASE_URL}/vehicles`, newCar).then(response => {
+      this.setState({ vehiclesToDisplay: response.data.vehicles })
+    })
+
   }
 
   addBuyer() {
@@ -84,11 +117,18 @@ class App extends Component {
 
     //axios (POST)
     // setState with response -> buyersToDisplay
+    axios.post(`${BASE_URL}/buyers`, newBuyer).then(response => {
+      this.setState({ buyersToDisplay: response.data.buyers })
+    })
+
   }
 
   deleteBuyer(id) {
     // axios (DELETE)
     //setState with response -> buyersToDisplay
+    axios.delete(`${BASE_URL}/buyers/${id}`).then(response => {
+      this.setState({ buyersToDisplay: response.data.buyers })
+    })
   }
 
   nameSearch() {
@@ -96,6 +136,12 @@ class App extends Component {
 
     // axios (GET)
     // setState with response -> buyersToDisplay
+    axios.get(`${BASE_URL}/buyers`).then(response => {
+      let buyers = response.data.filter(b => {
+        return b.name.includes(searchLetters)
+      });
+      this.setState({ buyersToDisplay: buyers })
+    })
   }
 
   byYear() {
@@ -103,6 +149,12 @@ class App extends Component {
 
     // axios (GET)
     // setState with response -> vehiclesToDisplay
+    axios.get(`${BASE_URL}/vehicles`).then(response => {
+      let vehicles = response.data.filter(v => {
+        return v.year === parseInt(year)
+      });
+      this.setState({ vehiclesToDisplay: vehicles })
+    })
   }
 
   // Do not edit the code below
